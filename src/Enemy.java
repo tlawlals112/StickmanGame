@@ -5,7 +5,7 @@ public class Enemy extends Character {
     private Random random;
 
     public Enemy(int startX, int startY, String prefix) {
-        super(startX, startY, prefix);
+        super(startX, startY, "e_" + prefix); // 이미지 파일명에 "e_"를 추가
         this.random = new Random();
     }
 
@@ -30,6 +30,7 @@ public class Enemy extends Character {
         }
     }
 
+    @Override
     public void startSkillTimer() {
         super.startSkillTimer();
     }
