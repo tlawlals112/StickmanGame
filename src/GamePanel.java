@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.Timer;
+import java.awt.Color;
+import java.awt.Font;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Character player;
@@ -26,6 +28,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
         player.draw(g);
         enemy.draw(g);
+        // 체력 표시 추가
+        drawHealthBars(g);
+    }
+
+    private void drawHealthBars(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(50, 50, player.getHealth() * 2, 20); // 플레이어 체력 바
+        g.fillRect(550, 50, enemy.getHealth() * 2, 20); // 적 체력 바
+
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Player Health: " + player.getHealth(), 50, 45);
+        g.drawString("Enemy Health: " + enemy.getHealth(), 550, 45);
     }
 
     @Override
@@ -44,12 +59,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player.moveRight();
         } else if (code == KeyEvent.VK_A) {
             player.jab();
+            enemy.takeDamage(10); // 적 체력 감소
         } else if (code == KeyEvent.VK_S) {
             player.straight();
+            enemy.takeDamage(15); // 적 체력 감소
         } else if (code == KeyEvent.VK_Z) {
             player.lowKick();
+            enemy.takeDamage(8); // 적 체력 감소
         } else if (code == KeyEvent.VK_X) {
             player.highKick();
+            enemy.takeDamage(12); // 적 체력 감소
         }
     }
 

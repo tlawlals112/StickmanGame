@@ -15,6 +15,8 @@ public class Character {
     protected Timer skillTimer;
     protected Timer idleTimer;
     protected Random random;
+    protected int attackDistance; // 공격 시 이동한 거리
+    protected int health; // 체력 추가
 
     public Character(int startX, int startY, String prefix) {
         this.idle1 = new ImageIcon("assets/" + prefix + "_idle1.png").getImage();
@@ -32,14 +34,16 @@ public class Character {
         this.moveAmount = 0;
         this.moveDirection = 0;
         this.random = new Random();
-        
+        this.attackDistance = 0; // 초기화
+        this.health = 100; // 체력 초기화
+
         this.skillTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isAttacking = false;
-                moveAmount = 0;
-                x = originalX;
-                currentImage = idle1;
+                moveAmount = attackDistance; // 이동한 거리만큼 되돌아감
+                moveDirection = -moveDirection; // 반대 방향으로 이동
+                attackDistance = 0; // 초기화
                 skillTimer.stop();
             }
         });
@@ -81,6 +85,7 @@ public class Character {
         currentImage = jab;
         moveDirection = 4;
         moveAmount = 100;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
     }
@@ -89,6 +94,7 @@ public class Character {
         currentImage = straight;
         moveDirection = 4;
         moveAmount = 100;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
     }
@@ -97,6 +103,7 @@ public class Character {
         currentImage = lowKick;
         moveDirection = 2;
         moveAmount = 50;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
     }
@@ -105,6 +112,7 @@ public class Character {
         currentImage = highKick;
         moveDirection = 2;
         moveAmount = 50;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
     }
@@ -134,5 +142,17 @@ public class Character {
 
     public void resetPosition() {
         x = originalX;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void takeDamage(int damage) {
+        this.health -= damage;
     }
 }

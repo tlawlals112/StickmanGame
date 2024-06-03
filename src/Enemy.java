@@ -31,17 +31,15 @@ public class Enemy extends Character {
     }
 
     @Override
-    public void startSkillTimer() {
-        super.startSkillTimer();
-    }
-
-    @Override
     public void jab() {
         currentImage = jab;
         moveDirection = -4; // 왼쪽으로 이동
         moveAmount = 100;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
+        // 체력 감소 로직 추가
+        takeDamage(10);
     }
 
     @Override
@@ -49,8 +47,11 @@ public class Enemy extends Character {
         currentImage = straight;
         moveDirection = -4; // 왼쪽으로 이동
         moveAmount = 100;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
+        // 체력 감소 로직 추가
+        takeDamage(15);
     }
 
     @Override
@@ -58,8 +59,11 @@ public class Enemy extends Character {
         currentImage = lowKick;
         moveDirection = -2; // 왼쪽으로 이동
         moveAmount = 50;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
+        // 체력 감소 로직 추가
+        takeDamage(8);
     }
 
     @Override
@@ -67,7 +71,10 @@ public class Enemy extends Character {
         currentImage = highKick;
         moveDirection = -2; // 왼쪽으로 이동
         moveAmount = 50;
+        attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
+        // 체력 감소 로직 추가
+        takeDamage(12);
     }
 }
