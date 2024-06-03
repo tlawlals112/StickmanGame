@@ -18,6 +18,8 @@ public class Character {
     protected int attackDistance; // 공격 시 이동한 거리
     protected int health; // 체력 추가
     protected int panelWidth; // 패널의 너비
+    private boolean invincible; // 무적 여부
+    private Timer invincibilityTimer; // 무적 지속 시간을 측정하기 위한 타이머
 
     public Character(int startX, int startY, String prefix, int panelWidth) {
         this.idle1 = new ImageIcon("assets/" + prefix + "_idle1.png").getImage();
@@ -69,6 +71,14 @@ public class Character {
             }
         });
         this.idleTimer.start();
+        this.invincible = false;
+        this.invincibilityTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                invincible = false; // 무적 상태 해제
+                invincibilityTimer.stop(); // 타이머 중지
+            }
+        });
     }
 
     public void draw(Graphics g) {
@@ -163,8 +173,15 @@ public class Character {
     }
 
     public void takeDamage(int damage) {
-        this.health -= damage;
+        if (!isInvincible()) {
+            this.health -= damage;
+            if (this.health < 0) {
+                this.health = 0;
+            }
+            setInvincible(); // 무적 상태로 전환
+        }
     }
+
 
     // 충돌 감지 메서드 추가
     public boolean isCollidingWith(Character other) {
@@ -172,5 +189,13 @@ public class Character {
                this.x + this.currentImage.getWidth(null) > other.x &&
                this.y < other.y + other.currentImage.getHeight(null) &&
                this.y + this.currentImage.getHeight(null) > other.y;
+    }
+    public void setInvincible() {
+        invincible = true; // 무적 상태 설정
+        invincibilityTimer.restart(); // 무적 지속 시간을 측정하기 위한 타이머 시작
+    }
+
+    public boolean isInvincible() {
+        return invincible;
     }
 }
