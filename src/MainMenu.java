@@ -7,7 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainMenu extends JPanel {
-    public MainMenu() {
+    private JFrame mainMenuFrame; // 메인 메뉴의 프레임 참조를 필드로 추가
+
+    public MainMenu(JFrame mainMenuFrame) { // 생성자에서 메인 메뉴의 프레임을 전달받음
+        this.mainMenuFrame = mainMenuFrame; // 전달받은 메인 메뉴의 프레임을 필드에 저장
         setLayout(new GridLayout(3, 1, 0, 10)); // 3행 1열의 그리드 레이아웃, 간격은 세로 10px
         
         JButton startButton = new JButton("Start");
@@ -41,6 +44,9 @@ public class MainMenu extends JPanel {
     }
     
     private void startGame() {
+        // 게임이 시작될 때 메인 메뉴를 숨기기 위해 setVisible(false) 호출
+        mainMenuFrame.setVisible(false);
+        
         JFrame gameFrame = new JFrame("Stickman Fighting Game");
         GamePanel gamePanel = new GamePanel();
         gameFrame.add(gamePanel);
@@ -67,7 +73,7 @@ public class MainMenu extends JPanel {
         frame.setSize(400, 300);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null); // 화면 가운데 정렬
-        frame.add(new MainMenu());
+        frame.add(new MainMenu(frame));
         frame.setVisible(true);
     }
 }
