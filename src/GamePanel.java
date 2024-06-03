@@ -19,6 +19,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Timer timer;
     private boolean gameOver; // 게임 종료 여부를 나타내는 변수
     private JButton backButton; // 게임이 종료된 후에 메인 메뉴로 돌아가는 버튼
+    private SoundPlayer bgmPlayer; 
 
     public GamePanel() {
         this.player = new Character(100, 400, "stickman", 800); // 패널의 너비를 전달
@@ -29,6 +30,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         this.gameOver = false; // 게임 종료 변수 초기화
+        
+        this.bgmPlayer = new SoundPlayer("musics/InGame.wav"); // 배경음악 파일 경로 지정
+        this.bgmPlayer.play(); // 배경음악 재생
 
         // "Back to Main Menu" 버튼 생성 및 초기화
         backButton = new JButton("Back to Main Menu");
