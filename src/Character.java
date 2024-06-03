@@ -17,8 +17,9 @@ public class Character {
     protected Random random;
     protected int attackDistance; // 공격 시 이동한 거리
     protected int health; // 체력 추가
+    protected int panelWidth; // 패널의 너비
 
-    public Character(int startX, int startY, String prefix) {
+    public Character(int startX, int startY, String prefix, int panelWidth) {
         this.idle1 = new ImageIcon("assets/" + prefix + "_idle1.png").getImage();
         this.idle2 = new ImageIcon("assets/" + prefix + "_idle2.png").getImage();
         this.idle3 = new ImageIcon("assets/" + prefix + "_idle3.png").getImage();
@@ -36,6 +37,7 @@ public class Character {
         this.random = new Random();
         this.attackDistance = 0; // 초기화
         this.health = 100; // 체력 초기화
+        this.panelWidth = panelWidth; // 패널의 너비 설정
 
         this.skillTimer = new Timer(1000, new ActionListener() {
             @Override
@@ -74,11 +76,15 @@ public class Character {
     }
 
     public void moveLeft() {
-        x -= 5;
+        if (x - 5 >= 0) { // 화면의 왼쪽 경계를 벗어나지 않도록
+            x -= 5;
+        }
     }
 
     public void moveRight() {
-        x += 5;
+        if (x + currentImage.getWidth(null) + 5 <= panelWidth) { // 화면의 오른쪽 경계를 벗어나지 않도록
+            x += 5;
+        }
     }
 
     public void jab() {
@@ -127,8 +133,12 @@ public class Character {
 
     public void update() {
         if (moveAmount > 0) {
-            x += moveDirection;
-            moveAmount -= Math.abs(moveDirection);
+            if (x + moveDirection >= 0 && x + currentImage.getWidth(null) + moveDirection <= panelWidth) {
+                x += moveDirection;
+                moveAmount -= Math.abs(moveDirection);
+            } else {
+                moveAmount = 0;
+            }
         }
     }
 
@@ -154,5 +164,13 @@ public class Character {
 
     public void takeDamage(int damage) {
         this.health -= damage;
+    }
+
+    // 충돌 감지 메서드 추가
+    public boolean isCollidingWith(Character other) {
+        return this.x < other.x + other.currentImage.getWidth(null) &&
+               this.x + this.currentImage.getWidth(null) > other.x &&
+               this.y < other.y + other.currentImage.getHeight(null) &&
+               this.y + this.currentImage.getHeight(null) > other.y;
     }
 }

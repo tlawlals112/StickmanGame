@@ -14,8 +14,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Timer timer;
 
     public GamePanel() {
-        this.player = new Character(100, 400, "stickman");
-        this.enemy = new Enemy(600, 400, "stickman"); // 적도 동일한 stickman 이미지를 사용하도록 설정
+        this.player = new Character(100, 400, "stickman", 800); // 패널의 너비를 전달
+        this.enemy = new Enemy(600, 400, "stickman", 800); // 적도 동일하게 설정
         this.timer = new Timer(20, this); // 20 milliseconds to update movement and idle image
         this.timer.start();
         addKeyListener(this);
@@ -28,13 +28,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
         player.draw(g);
         enemy.draw(g);
-        // 체력 표시 추가
-        drawHealthBars(g);
-    }
 
-    private void drawHealthBars(Graphics g) {
+        // 플레이어 체력 바
         g.setColor(Color.RED);
         g.fillRect(50, 50, player.getHealth() * 2, 20); // 플레이어 체력 바
+        g.setColor(Color.RED);
         g.fillRect(550, 50, enemy.getHealth() * 2, 20); // 적 체력 바
 
         g.setColor(Color.BLACK);
@@ -47,7 +45,30 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         player.update();
         enemy.update();
+        checkCollisions(); // 충돌 체크
         repaint();
+    }
+
+    private void checkCollisions() {
+        if (player.isAttacking() && player.isCollidingWith(enemy)) {
+            enemy.takeDamage(getAttackDamage(player));
+        }
+        if (enemy.isAttacking() && enemy.isCollidingWith(player)) {
+            player.takeDamage(getAttackDamage(enemy));
+        }
+    }
+
+    private int getAttackDamage(Character character) {
+        if (character.currentImage == character.jab) {
+            return 10;
+        } else if (character.currentImage == character.straight) {
+            return 15;
+        } else if (character.currentImage == character.lowKick) {
+            return 8;
+        } else if (character.currentImage == character.highKick) {
+            return 12;
+        }
+        return 0;
     }
 
     @Override
@@ -59,16 +80,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player.moveRight();
         } else if (code == KeyEvent.VK_A) {
             player.jab();
-            enemy.takeDamage(10); // 적 체력 감소
         } else if (code == KeyEvent.VK_S) {
-            player.straight();
-            enemy.takeDamage(15); // 적 체력 감소
+            player.straight(); 
         } else if (code == KeyEvent.VK_Z) {
             player.lowKick();
-            enemy.takeDamage(8); // 적 체력 감소
         } else if (code == KeyEvent.VK_X) {
             player.highKick();
-            enemy.takeDamage(12); // 적 체력 감소
         }
     }
 

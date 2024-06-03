@@ -4,8 +4,8 @@ import java.util.Random;
 public class Enemy extends Character {
     private Random random;
 
-    public Enemy(int startX, int startY, String prefix) {
-        super(startX, startY, "e_" + prefix); // 이미지 파일명에 "e_"를 추가
+    public Enemy(int startX, int startY, String prefix, int panelWidth) {
+        super(startX, startY, "e_" + prefix, panelWidth); // 이미지 파일명에 "e_"를 추가
         this.random = new Random();
     }
 
@@ -38,8 +38,6 @@ public class Enemy extends Character {
         attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
-        // 체력 감소 로직 추가
-        takeDamage(10);
     }
 
     @Override
@@ -50,8 +48,6 @@ public class Enemy extends Character {
         attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
-        // 체력 감소 로직 추가
-        takeDamage(15);
     }
 
     @Override
@@ -62,8 +58,6 @@ public class Enemy extends Character {
         attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
-        // 체력 감소 로직 추가
-        takeDamage(8);
     }
 
     @Override
@@ -74,7 +68,5 @@ public class Enemy extends Character {
         attackDistance = moveAmount; // 이동한 거리 저장
         isAttacking = true;
         startSkillTimer();
-        // 체력 감소 로직 추가
-        takeDamage(12);
     }
 }
