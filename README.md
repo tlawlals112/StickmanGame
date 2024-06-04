@@ -22,9 +22,8 @@ java -jar stickmanGame.jar
 ```
 
 # 실행 예시
-<span style="color:red">동영상 업로드 시 gif로 변환 후 링크를 삽입</span>
-<span style="color:red">아래 홈페이지 참고 : https://onlydev.tistory.com/15 </span>
-![example](https://github.com/RmKuma/oss_personal_project_phase1/assets/20412048/98ecfe0c-34c5-4592-86e9-defded705a36)
+![stickman_ex](https://github.com/tlawlals112/oss_personal_project_phase1/assets/164158373/799945dc-c220-4882-a9df-eb56945fe1ce)
+
 
 # 코드 설명
 .
