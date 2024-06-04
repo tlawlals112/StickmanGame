@@ -27,6 +27,7 @@ java -jar stickmanGame.jar
 
 # 코드 설명
 .
+```
 ├── assets/
 │   ├── e_stickman_idle1.png
 │   ├── e_stickman_idle2.png
@@ -51,7 +52,7 @@ java -jar stickmanGame.jar
 ├── GamePanel.java
 ├── MainMenu.java
 └── SoundPlayer.java
-
+```
 ## Character 클래스
 Character 클래스는 플레이어와 적 캐릭터의 공통적인 동작과 속성을 정의합니다.
 
