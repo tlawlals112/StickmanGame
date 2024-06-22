@@ -1,12 +1,11 @@
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
+import javax.swing.Timer;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.ImageIcon;
@@ -17,33 +16,56 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Character player;
     private Enemy enemy;
     private Timer timer;
-    private boolean gameOver; // 게임 종료 여부를 나타내는 변수
-    private JButton backButton; // 게임이 종료된 후에 메인 메뉴로 돌아가는 버튼
-    private SoundPlayer bgmPlayer; 
+    private boolean gameOver;
+    private JButton backButton;
+    private static SoundPlayer bgmPlayer; // static으로 변경
+    private boolean playMusic; // 배경음악 On/Off 상태를 저장할 변수 추가
+    private int timeElapsed; // 경과 시간을 저장할 변수 추가
+    private Timer gameTimer; // 게임 타이머 변수 추가
 
-    public GamePanel() {
-        this.player = new Character(100, 400, "stickman", 800); // 패널의 너비를 전달
-        this.enemy = new Enemy(600, 400, "stickman", 800); // 적도 동일하게 설정
-        this.timer = new Timer(20, this); // 20 milliseconds to update movement and idle image
+    public GamePanel(boolean playMusic) { // 배경음악 On/Off 상태를 매개변수로 받는 생성자 추가
+        this.player = new Character(100, 400, "stickman", 800);
+        this.enemy = new Enemy(600, 400, "stickman", 800);
+        this.timer = new Timer(20, this);
         this.timer.start();
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
-        this.gameOver = false; // 게임 종료 변수 초기화
-        
-        this.bgmPlayer = new SoundPlayer("musics/InGame.wav"); // 배경음악 파일 경로 지정
-        this.bgmPlayer.play(); // 배경음악 재생
+        this.gameOver = false;
+        this.playMusic = playMusic; // 전달받은 배경음악 On/Off 상태 저장
+        this.timeElapsed = 0; // 경과 시간 초기화
+
+        // 게임 타이머 초기화 (1000ms 간격으로 업데이트)
+        this.gameTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateTimer();
+            }
+        });
+        this.gameTimer.start(); // 게임 타이머 시작
+
+        // 배경음악 재생 설정
+        bgmPlayer = new SoundPlayer("musics/InGame.wav");
+        if (playMusic) {
+            bgmPlayer.play(); // 배경음악 On 상태인 경우 재생
+        }
 
         // "Back to Main Menu" 버튼 생성 및 초기화
         backButton = new JButton("Back to Main Menu");
-        backButton.setBounds(300, 500, 200, 50); // 버튼 위치와 크기 설정
+        backButton.setBounds(300, 500, 200, 50);
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                returnToMainMenu(); // 메인 메뉴로 돌아가는 메서드 호출
+                returnToMainMenu();
             }
         });
-        add(backButton); // 패널에 버튼 추가
+        add(backButton);
+    }
+
+    // 경과 시간을 업데이트하는 메서드
+    private void updateTimer() {
+        timeElapsed++;
+        repaint(); // 화면 갱신
     }
 
     @Override
@@ -63,6 +85,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g.setFont(new Font("Arial", Font.BOLD, 16));
             g.drawString("Player Health: " + player.getHealth(), 50, 45);
             g.drawString("Enemy Health: " + enemy.getHealth(), 550, 45);
+
+            // 경과 시간을 화면에 그리기
+            g.drawString("Time Elapsed: " + timeElapsed + " seconds", 10, 20);
         } else {
             // 게임 종료 시 "Game Over" 이미지를 표시합니다.
             ImageIcon gameOverImage = new ImageIcon("assets/game_over.png");
@@ -91,6 +116,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // 플레이어 또는 적의 체력이 0 이하인 경우 게임 종료 처리를 합니다.
         if (player.getHealth() <= 0 || enemy.getHealth() <= 0) {
             gameOver = true; // 게임 종료 상태로 설정
+            gameTimer.stop(); // 게임 종료 시 타이머 정지
         }
     }
 
@@ -130,11 +156,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     // 게임 종료 후 메인 메뉴로 돌아가는 메서드
     private void returnToMainMenu() {
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // 현재 패널의 부모 프레임 가져오기
-        frame.getContentPane().removeAll(); // 기존의 컴포넌트 제거
-        frame.add(new MainMenu(frame)); // 새로운 MainMenu 패널 추가
-        frame.repaint(); // 프레임 다시 그리기
-        frame.revalidate(); // 프레임 다시 유효화
+        bgmPlayer.stop(); // 게임 패널에서 메인 메뉴로 돌아갈 때 배경 음악 정지
+        gameTimer.stop(); // 메인 메뉴로 돌아갈 때 타이머 정지
+
+        JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        currentFrame.dispose();
+        JFrame mainMenuFrame = new JFrame("Main Menu");
+        mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainMenuFrame.setSize(400, 300);
+        mainMenuFrame.setResizable(false);
+        mainMenuFrame.setLocationRelativeTo(null);
+        mainMenuFrame.add(new MainMenu(mainMenuFrame));
+        mainMenuFrame.setVisible(true);
     }
 
     @Override
